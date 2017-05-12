@@ -8,7 +8,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "botkit": "^0.2.2",
+    "botkit": "^0.5.4",
     "request": "^2.74.0",
     "tempfile": "^1.1.1",
     "webshot": "^0.18.0"
