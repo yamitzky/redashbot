@@ -57,10 +57,14 @@ controller.spawn({
 Object.keys(redashApiKeysPerHost).forEach((redashHost) => {
   const redashHostAlias = redashApiKeysPerHost[redashHost]["alias"];
   const redashApiKey    = redashApiKeysPerHost[redashHost]["key"];
-  controller.hears(`${redashHost}/queries/([0-9]+)#([0-9]+|table)`, slackMessageEvents, async (bot, message) => {
+  controller.hears(`${redashHost}/(queries/([0-9]+)#([0-9]+|table)|public/dashboards/([a-zA-Z0-9]+))`, slackMessageEvents, async (bot, message) => {
     const originalUrl = message.match[0];
-    const queryId = message.match[1];
-    const visualizationId =  message.match[2];
+    // for embed
+    const queryId = message.match[2];
+    const visualizationId =  message.match[3];
+    // for dashboard
+    const dashboardId = message.match[4];
+
     let visualizationPrimaryKey = visualizationId;
     if (visualizationId === 'table') {
       try {
@@ -72,8 +76,14 @@ Object.keys(redashApiKeysPerHost).forEach((redashHost) => {
       }
     }
 
-    const queryUrl = `${redashHostAlias}/queries/${queryId}#${visualizationId}`;
+    let queryUrl = `${redashHostAlias}/queries/${queryId}#${visualizationId}`;
     let embedUrl = `${redashHostAlias}/embed/query/${queryId}/visualization/${visualizationPrimaryKey}?api_key=${redashApiKey}`;
+    let filename = `query-${queryId}-visualization-${visualizationId}.png`
+    if (dashboardId) {
+      queryUrl = `${redashHostAlias}/public/dashboards/${dashboardId}`
+      embedUrl = queryUrl
+      filename = `dashboard-${dashboardId}`
+    }
 
     bot.reply(message, `Taking screenshot of ${originalUrl}`);
     bot.botkit.log(queryUrl);
@@ -106,7 +116,7 @@ Object.keys(redashApiKeysPerHost).forEach((redashHost) => {
 
       const options = {
         token: slackBotToken,
-        filename: `query-${queryId}-visualization-${visualizationId}.png`,
+        filename: filename,
         file: fs.createReadStream(outputFile),
         channels: message.channel
       };
