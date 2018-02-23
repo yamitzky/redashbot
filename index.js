@@ -5,6 +5,8 @@ const webshot = require("webshot");
 const tempfile = require("tempfile");
 const fs = require("fs");
 const request = require("request");
+const rp = require('request-promise-native');
+
 
 // This configuration can gets overwritten when process.env.SLACK_MESSAGE_EVENTS is given.
 const DEFAULT_SLACK_MESSAGE_EVENTS = "direct_message,direct_mention,mention";
@@ -55,12 +57,23 @@ controller.spawn({
 Object.keys(redashApiKeysPerHost).forEach((redashHost) => {
   const redashHostAlias = redashApiKeysPerHost[redashHost]["alias"];
   const redashApiKey    = redashApiKeysPerHost[redashHost]["key"];
-  controller.hears(`${redashHost}/queries/([0-9]+)#([0-9]+)`, slackMessageEvents, (bot, message) => {
+  controller.hears(`${redashHost}/queries/([0-9]+)#([0-9]+|table)`, slackMessageEvents, async (bot, message) => {
     const originalUrl = message.match[0];
     const queryId = message.match[1];
     const visualizationId =  message.match[2];
+    let visualizationPrimaryKey = visualizationId;
+    if (visualizationId === 'table') {
+      try {
+        const body = await rp.get({ uri: `${redashHost}/api/queries/${queryId}`, qs: { api_key: redashApiKey } });
+        visualizationPrimaryKey = JSON.parse(body).visualizations.find((vis) => vis.type === 'TABLE').id;
+      } catch (err) {
+        bot.reply(message, err);
+        return bot.botkit.log.error(err);
+      }
+    }
+
     const queryUrl = `${redashHostAlias}/queries/${queryId}#${visualizationId}`;
-    const embedUrl = `${redashHostAlias}/embed/query/${queryId}/visualization/${visualizationId}?api_key=${redashApiKey}`;
+    let embedUrl = `${redashHostAlias}/embed/query/${queryId}/visualization/${visualizationPrimaryKey}?api_key=${redashApiKey}`;
 
     bot.reply(message, `Taking screenshot of ${originalUrl}`);
     bot.botkit.log(queryUrl);
