@@ -65,24 +65,30 @@ Object.keys(redashApiKeysPerHost).forEach((redashHost) => {
     // for dashboard
     const dashboardId = message.match[4];
 
+    let query = null;
+    let visualization = null;
     let visualizationPrimaryKey = visualizationId;
-    if (visualizationId === 'table') {
+    if (queryId) {
       try {
         const body = await rp.get({ uri: `${redashHost}/api/queries/${queryId}`, qs: { api_key: redashApiKey } });
-        visualizationPrimaryKey = JSON.parse(body).visualizations.find((vis) => vis.type === 'TABLE').id;
+        query = JSON.parse(body);
+        visualization = query.visualizations.find(vis => vis.id.toString() === visualizationId || vis.type.toLowerCase() === visualizationId);
+        visualizationPrimaryKey = visualization.id;
       } catch (err) {
-        bot.reply(message, err);
-        return bot.botkit.log.error(err);
+        bot.botkit.log.error(err);
       }
     }
 
     let queryUrl = `${redashHostAlias}/queries/${queryId}#${visualizationId}`;
     let embedUrl = `${redashHostAlias}/embed/query/${queryId}/visualization/${visualizationPrimaryKey}?api_key=${redashApiKey}`;
-    let filename = `query-${queryId}-visualization-${visualizationId}.png`
+    let filename = `query-${queryId}-visualization-${visualizationId}.png`;
+    if (query && visualization) {
+      filename = `${query.name}-${visualization.name}-${filename}`
+    }
     if (dashboardId) {
-      queryUrl = `${redashHostAlias}/public/dashboards/${dashboardId}`
-      embedUrl = queryUrl
-      filename = `dashboard-${dashboardId}`
+      queryUrl = `${redashHostAlias}/public/dashboards/${dashboardId}`;
+      embedUrl = queryUrl;
+      filename = `dashboard-${dashboardId}.png`;
     }
 
     bot.reply(message, `Taking screenshot of ${originalUrl}`);
