@@ -8,10 +8,11 @@
   },
   "license": "MIT",
   "dependencies": {
+    "await-sleep": "0.0.1",
     "botkit": "^0.5.4",
+    "puppeteer": "^1.3.0",
     "request": "^2.74.0",
     "request-promise-native": "^1.0.5",
-    "tempfile": "^1.1.1",
-    "webshot": "^0.18.0"
+    "tempfile": "^1.1.1"
   }
 }

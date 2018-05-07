@@ -1,11 +1,11 @@
 "use strict"
 
 const Botkit = require("botkit")
-const webshot = require("webshot")
+const puppeteer = require("puppeteer")
 const tempfile = require("tempfile")
 const fs = require("fs")
-const request = require("request")
-const rp = require('request-promise-native')
+const request = require('request-promise-native')
+const sleep = require('await-sleep')
 
 
 // This configuration can gets overwritten when process.env.SLACK_MESSAGE_EVENTS is given.
@@ -70,7 +70,7 @@ Object.keys(redashApiKeysPerHost).forEach((redashHost) => {
     let visualizationPrimaryKey = visualizationId
     if (queryId) {
       try {
-        const body = await rp.get({ uri: `${redashHost}/api/queries/${queryId}`, qs: { api_key: redashApiKey } })
+        const body = await request.get({ uri: `${redashHost}/api/queries/${queryId}`, qs: { api_key: redashApiKey } })
         query = JSON.parse(body)
         visualization = query.visualizations.find(vis => vis.id.toString() === visualizationId || vis.type.toLowerCase() === visualizationId)
         visualizationPrimaryKey = visualization.id
@@ -97,24 +97,20 @@ Object.keys(redashApiKeysPerHost).forEach((redashHost) => {
 
     const outputFile = tempfile(".png")
     const webshotOptions = {
-      screenSize: {
-        width: 720,
-        height: 360
-      },
       shotSize: {
         width: 720,
         height: "all"
       },
-      renderDelay: 2000,
-      timeout: 100000
     }
 
-    webshot(embedUrl, outputFile, webshotOptions, (err) => {
-      if (err) {
-        const msg = `Something wrong happend in take a screen capture : ${err}`
-        bot.reply(message, msg)
-        return bot.botkit.log.error(msg)
-      }
+    try {
+      const browser = await puppeteer.launch()
+      const page = await browser.newPage()
+      page.setViewport({ width: 720, height: 360 })
+      await page.goto(embedUrl)
+      await sleep(2000)
+      await page.screenshot({ path: outputFile, fullPage: true })
+      await browser.close()
 
       bot.botkit.log.debug(outputFile)
       bot.botkit.log.debug(Object.keys(message))
@@ -128,19 +124,12 @@ Object.keys(redashApiKeysPerHost).forEach((redashHost) => {
       }
 
       // bot.api.file.upload cannot upload binary file correctly, so directly call Slack API.
-      request.post({ url: "https://api.slack.com/api/files.upload", formData: options }, (err, resp, body) => {
-        if (err) {
-          const msg = `Something wrong happend in file upload : ${err}`
-          bot.reply(message, msg)
-          bot.botkit.log.error(msg)
-        } else if (resp.statusCode == 200) {
-          bot.botkit.log("ok")
-        } else {
-          const msg = `Something wrong happend in file upload : status code=${resp.statusCode}`
-          bot.reply(message, msg)
-          bot.botkit.log.error(msg)
-        }
-      })
-    })
+      const body = await request.post({ url: "https://api.slack.com/api/files.upload", formData: options, simple: true })
+      bot.botkit.log("ok")
+    } catch (err) {
+      const msg = `Something wrong happend in take a screen capture : ${err}`
+      bot.reply(message, msg)
+      bot.botkit.log.error(msg)
+    }
   })
 })
