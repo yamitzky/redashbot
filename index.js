@@ -104,7 +104,10 @@ Object.keys(redashApiKeysPerHost).forEach((redashHost) => {
     }
 
     try {
-      const browser = await puppeteer.launch()
+      const browser = await puppeteer.launch({
+        executablePath: process.env.CHROMIUM_BROWSER_PATH,
+        args: ['--disable-dev-shm-usage', '--no-sandbox']
+      })
       const page = await browser.newPage()
       page.setViewport({ width: 720, height: 360 })
       await page.goto(embedUrl)
