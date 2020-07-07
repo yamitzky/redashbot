@@ -77,7 +77,7 @@ const takeScreenshot = async (url) => {
   const page = await browser.newPage()
   page.setViewport({ width: 1024, height: 360 })
   await page.goto(url)
-  await sleep(5000)
+  await sleep(process.env.SLEEP_TIME ? parseFloat(process.env.SLEEP_TIME) : 2000)
   await page.screenshot({ path: file, fullPage: true })
   await browser.close()
   return file
