@@ -1,27 +1,27 @@
 {
-  "name": "Slack Bot for re:dash",
-  "description": "A slack bot for re:dash, it can get screen capture of re:dash visualization",
+  "name": "Slack Bot for Redash",
+  "description": "A slack bot for Redash, it can get screen capture of Redash visualization",
   "repository": "https://github.com/hakobera/redashbot",
-  "keywords": ["re:dash", "slack", "bot"],
+  "keywords": ["redash", "slack", "bot"],
   "env": {
     "SLACK_BOT_TOKEN": {
       "description": "Slack bot token, for more detail see https://api.slack.com/bot-users",
       "required": true
     },
     "REDASH_HOST": {
-      "description": "URL of your re:dash server, like https://your-redash-server.example.com",
+      "description": "URL of your Redash server, like https://your-redash-server.example.com",
       "required": false
     },
     "REDASH_HOST_ALIAS": {
-      "description": "URL of your re:dash server accessible from the bot.",
+      "description": "URL of your Redash server accessible from the bot.",
       "required": false
     },
     "REDASH_API_KEY": {
-      "description": "API key of your re:dash account",
+      "description": "API key of your Redash account",
       "required": false
     },
     "REDASH_HOSTS_AND_API_KEYS": {
-      "description": "If you want to use multiple Re:dash at once, specify like http://redash1.example.com;TOKEN1,http://redash2.example.com;TOKEN2",
+      "description": "If you want to use multiple Redash at once, specify like http://redash1.example.com;TOKEN1,http://redash2.example.com;TOKEN2",
       "required": false
     },
     "SLACK_MESSAGE_EVENTS": {

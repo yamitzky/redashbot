@@ -18,7 +18,7 @@ if (!process.env.SLACK_BOT_TOKEN) {
 }
 if (!((process.env.REDASH_HOST && process.env.REDASH_API_KEY) || (process.env.REDASH_HOSTS_AND_API_KEYS))) {
   console.error("Error: Specify REDASH_HOST and REDASH_API_KEY in environment values")
-  console.error("Or you can set multiple Re:dash configs by specifying like below")
+  console.error("Or you can set multiple Redash configs by specifying like below")
   console.error("REDASH_HOSTS_AND_API_KEYS=\"http://redash1.example.com;TOKEN1,http://redash2.example.com;TOKEN2\"")
   process.exit(1)
 }
