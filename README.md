@@ -1,44 +1,58 @@
-# Slack Bot for Redash
+# Slack Bot for Redash V2
 
-This is slack bot for [Redash](https://redash.io).
+Redashbot V2 is a open-source slack bot for [Redash](https://redash.io).
+
+(The original work is by hakobera/redashbot, but it is currently not maintained. I rewrote almost all of the code.)
 
 ## Features
 
-- Take a screen capture of visualization
-  - Bot can handle message format like `@botname <visualization URL>`
-    - example: `@redashbot https://your-redash-server.example.com/queries/1#2`
+- Visualization(Chart) screenshot
+- Dashboard screenshot
+- Table result (*NOT SCREENSHOT*)
+- Docker deployment
+- <s>Serverless deployment</s>
+- HTTP-based New Slack app (non-RTM style)
+- **Open source!**
 
 ![screenshot.png](./images/screenshot.png)
 
-## How to develop
 
-Clone this repository, then
+## Usage
 
-```bash
-$ npm install
-$ export REDASH_HOST=https://your-redash-server.example.com
-$ export REDASH_API_KEY=your-redash-api-key
-$ export SLACK_BOT_TOKEN=your-slack-bot-token
-$ node index.js
-```
+- Visualization
+  - `@botname <Query URL>#<Viz ID>`
+    - e.g. `@redash https://your-redash-server.example.com/queries/1#2`
+- Dashboard
+  - `@botname <Dashboard URL>`
+    - e.g. `@redash https://your-redash-server.example.com/dashboards/dashboard-name`
+- Table
+  - `@botname <Query URL>#table`
+    - e.g. `@redash https://your-redash-server.example.com/queries/1#table`
+    
+## Setup
 
-## How to deploy to Heroku
+You must create an app and set environment variables `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET`.
 
-You can easy to deploy redashbot to Heroku, just click following button.
+[The Official Document](https://slack.dev/bolt-js/tutorial/getting-started#create-an-app).
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+Then, `npm start` or `docker run yamitzky/redashbot:2.0.0` to start. If you use Docker, do not forget to feed environment variable via `-e` or `.env` file.
 
 ## Environment variables
 
 ### SLACK_BOT_TOKEN (required)
 
-Slack's Bot User Token
+Slack's bot token.
+
+### SLACK_SIGNING_SECRET (required)
+
+Slack's sigining secret.
 
 ### REDASH_HOST and REDASH_API_KEY (optional)
 
 Redash's URL and its API Key.
 
 ## REDASH_HOST_ALIAS (optional)
+
 Redash' URL accessible from the bot.
 
 ### REDASH_HOSTS_AND_API_KEYS (optional)
@@ -55,9 +69,50 @@ or if you need to specify REDASH_HOST_ALIAS for each Redash, like below
 REDASH_HOSTS_AND_API_KEYS="http://redash1.example.com;http://redash1-alias.example.com;TOKEN1,http://redash2.example.com;TOKEN2"
 ```
 
-### SLACK_MESSAGE_EVENTS (optional)
+### SLEEP_TIME (optional)
 
-Message events this bot reacts.
-Available values are listd in https://github.com/howdyai/botkit/blob/master/readme-slack.md#message-received-events
-Its default is *direct_message,direct_mention,mention*
+Milliseconds to wait loading finished before capturing.
 
+### BROWSER (optional and experimental)
+
+`chromium`, `firefox` or `webkit`. default is `chromium`
+
+## How to develop
+
+Clone this repository, then
+
+```bash
+$ npm install
+$ export REDASH_HOST=https://your-redash-server.example.com
+$ export REDASH_API_KEY=your-redash-api-key
+$ export SLACK_BOT_TOKEN=your-slack-bot-token
+$ node index.js
+```
+
+## Deploy
+
+Redashbot is just a node program.
+
+```
+npm start
+```
+
+### Docker
+
+[Docker image](https://hub.docker.com/r/yamitzky/redashbot) is provided. Currently, `latest` tag is used for v1(old), then you must use `2.0.0` or something like that.
+
+```
+docker run -it --rm -e SLACK_BOT_TOKEN=$SLACK_BOT_TOKEN -e SLACK_SIGNING_SECRET=$SLACK_SIGNING_SECRET -e REDASH_HOSTS_AND_API_KEYS=$REDASH_HOSTS_AND_API_KEYS -p 3000:3000 yamitzky/redashbot:2.0.0
+```
+
+docker-compose is also provided.
+
+```
+docker-compose up
+```
+
+### Heroku (NOT TESTED!!!!!!!!)
+
+You can easy to deploy redashbot to Heroku, just click following button.
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)

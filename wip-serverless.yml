@@ -1,0 +1,33 @@
+# WIP: not tested yet
+service: redashbot
+
+plugins:
+  - serverless-prune-plugin
+  - serverless-plugin-typescript
+  - serverless-offline
+
+provider:
+  name: aws
+  timeout: 30
+  runtime: nodejs12.x
+  environment:
+    SLACK_SIGNING_SECRET: ${env:SLACK_SIGNING_SECRET}
+    SLACK_BOT_TOKEN: ${env:SLACK_BOT_TOKEN}
+    REDASH_HOST: ${env:REDASH_HOST}
+    REDASH_HOST_ALIAS: ${env:REDASH_HOST_ALIAS}
+    REDASH_API_KEY: ${env:REDASH_API_KEY}
+    REDASH_HOSTS_AND_API_KEYS: ${env:REDASH_HOSTS_AND_API_KEYS}
+    SLEEP_TIME: ${env:SLEEP_TIME}
+    BROWSER: lambda-chromium
+
+functions:
+  app:
+    handler: serverless-handler.app
+    events:
+      - http:
+          method: post
+          path: /slack/events
+
+custom:
+  optimize:
+    exclude: ['playwright-aws-lambda']
