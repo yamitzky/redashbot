@@ -2,7 +2,7 @@
 
 Redashbot V2 is a open-source slack bot for [Redash](https://redash.io).
 
-(The original work is by hakobera/redashbot, but it is currently not maintained. I rewrote almost all of the code.)
+(This project was forked from hakobera/redashbot, but it is not maintained anymore. I have rewritten almost all of the code and published as v2.)
 
 ## Features
 
