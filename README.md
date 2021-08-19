@@ -111,7 +111,7 @@ docker-compose is also provided.
 docker-compose up
 ```
 
-### Heroku (NOT TESTED!!!!!!!!)
+### Heroku
 
 You can easy to deploy redashbot to Heroku, just click following button.
 
