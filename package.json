@@ -16,9 +16,9 @@
     "await-sleep": "0.0.1",
     "aws-serverless-express": "^3.3.8",
     "axios": "^0.19.2",
-    "playwright": "^1.3.0",
+    "playwright": "^1.14.0",
     "playwright-aws-lambda": "^0.6.0",
-    "playwright-core": "^1.3.0",
+    "playwright-core": "^1.14.0",
     "table-layout": "^0.4.3",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.2"
