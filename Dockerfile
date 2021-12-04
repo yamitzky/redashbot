@@ -1,6 +1,7 @@
 FROM mcr.microsoft.com/playwright:bionic
 
 USER root
+RUN apt-get update
 RUN apt-get install -y fonts-noto
 
 USER pwuser
