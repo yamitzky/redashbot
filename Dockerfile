@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:focal
+FROM mcr.microsoft.com/playwright:bionic
 
 USER root
 RUN apt-get update -y --fix-missing && apt-get install -y fonts-noto
