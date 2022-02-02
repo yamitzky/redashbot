@@ -1,4 +1,4 @@
-type Engine = 'chromium' | 'firefox' | 'webkit' | 'lambda-chromium'
+export type Engine = 'chromium' | 'firefox' | 'webkit' | 'lambda-chromium'
 type Hosts = {
   [host: string]: {
     alias: string
