@@ -3,8 +3,6 @@ import * as lambdaPlaywright from 'playwright-aws-lambda'
 import sleep from 'await-sleep'
 import { config, Engine } from './config'
 
-const engine = playwright[config.browser]
-
 async function launch(engine: Engine, options?: LaunchOptions) {
   if (engine === 'lambda-chromium') {
     return await lambdaPlaywright.launchChromium(options)
