@@ -40,7 +40,7 @@ export class Redash {
   }
 
   async getQuery(id: string): Promise<Query> {
-    const res = await axios.get(`${this.host}/api/queries/${id}`, {
+    const res = await axios.get(`${this.alias}/api/queries/${id}`, {
       params: {
         api_key: this.apiKey,
       },
@@ -49,16 +49,19 @@ export class Redash {
   }
 
   async getQueryResult(id: string): Promise<QueryResult> {
-    const res = await axios.get(`${this.host}/api/queries/${id}/results.json`, {
-      params: {
-        api_key: this.apiKey,
-      },
-    })
+    const res = await axios.get(
+      `${this.alias}/api/queries/${id}/results.json`,
+      {
+        params: {
+          api_key: this.apiKey,
+        },
+      }
+    )
     return res.data
   }
 
   async getDashboard(id: string): Promise<Dashboard> {
-    const res = await axios.get(`${this.host}/api/dashboards/${id}`, {
+    const res = await axios.get(`${this.alias}/api/dashboards/${id}`, {
       params: {
         api_key: this.apiKey,
       },
