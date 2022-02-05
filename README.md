@@ -31,11 +31,28 @@ Redashbot V2 is a open-source slack bot for [Redash](https://redash.io).
     
 ## Setup
 
-You must create an app and set environment variables `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET`.
+[Create an Slack app](https://api.slack.com/apps/) and set environment variables `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET`.
 
 [The Official Document](https://slack.dev/bolt-js/tutorial/getting-started#create-an-app).
 
-Then, `npm start` or `docker run yamitzky/redashbot:2.0.0` to start. If you use Docker, do not forget to feed environment variable via `-e` or `.env` file.
+On Event Subscription page, `Request URL` will be `https://<your-domain>/slack/events`.
+
+Then, `npm start` or `docker run yamitzky/redashbot:main` to start. When you use Docker, do not forget to pass environment variable via `-e` or `.env` file.
+
+### Slash Command (Optional)
+
+You can use redashbot with `/redash-capture [URL]`.
+
+On Slash Command page of your app, click [Create New Command] and submit. `Command` must be `/redash-capture` and `Request URL` will be `https://<your-domain>/slack/events`.
+
+### Workflow Steps (Optional)
+
+You can use redashbot as a Workflow step.
+
+On Interactivity & Shortcuts page of your app, enable Interactivity. `Request URL` will be `https://<your-domain>/slack/events`.
+
+Then, move to Workflow Steps page, and click [Add Step] and submit. `Callback ID` must be `redash_capture`.
+
 
 ## Environment variables
 
