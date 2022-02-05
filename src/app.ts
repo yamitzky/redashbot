@@ -2,11 +2,12 @@ import { App as BoltApp, AppOptions } from '@slack/bolt'
 import {
   handleRecordChart,
   handleRecordDashboard,
+  handleRecordDashboardLegacy,
   handleRecordTable,
   handleHelp,
 } from './handlers'
 import { Redash } from './redash'
-import { capture } from './capture'
+import { Browser } from './browser'
 import { Config } from './config'
 import { mention } from './middleware'
 
@@ -17,7 +18,8 @@ export function createApp(config: Config & AppOptions) {
 
   for (const [host, { alias, key: apiKey }] of Object.entries(config.hosts)) {
     const redash = new Redash({ host, apiKey, alias })
-    const ctx = { redash, capture }
+    const browser = new Browser()
+    const ctx = { redash, browser }
     app.message(
       new RegExp(`${host}/queries/([0-9]+)#([0-9]+)`),
       mention(),
@@ -26,10 +28,20 @@ export function createApp(config: Config & AppOptions) {
     app.message(
       new RegExp(`${host}/dashboard/([^?/|>]+)`),
       mention(),
+      handleRecordDashboardLegacy(ctx)
+    )
+    app.message(
+      new RegExp(`${host}/dashboards/(\\d+)-([^?/|>]+)`),
+      mention(),
       handleRecordDashboard(ctx)
     )
     app.message(
       new RegExp(`${host}/queries/([0-9]+)#table`),
+      mention(),
+      handleRecordTable(ctx)
+    )
+    app.message(
+      new RegExp(`${host}/queries/([0-9]+)>?$`),
       mention(),
       handleRecordTable(ctx)
     )

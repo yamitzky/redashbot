@@ -1,19 +1,20 @@
 import { Middleware, SlackEventMiddlewareArgs } from '@slack/bolt'
 import { Redash } from './redash'
 import Table from 'table-layout'
+import { Browser } from './browser'
 
 type Handler = (ctx: {
   redash: Redash
-  capture: (url: string) => Promise<Buffer>
+  browser: Browser
 }) => Middleware<SlackEventMiddlewareArgs<'message'>>
 
-export const handleHelp: Middleware<SlackEventMiddlewareArgs<
-  'message'
->> = async ({ say }) => {
+export const handleHelp: Middleware<
+  SlackEventMiddlewareArgs<'message'>
+> = async ({ say }) => {
   say('Sorry, I cannot help you.')
 }
 
-export const handleRecordChart: Handler = ({ redash, capture }) => {
+export const handleRecordChart: Handler = ({ redash, browser }) => {
   return async ({ context, say, client, message }) => {
     const [originalUrl, queryId, visualizationId]: string[] = context.matches
     await say(`Taking screenshot of ${originalUrl}`)
@@ -26,7 +27,7 @@ export const handleRecordChart: Handler = ({ redash, capture }) => {
     const embedUrl = `${redash.alias}/embed/query/${queryId}/visualization/${visualizationId}?api_key=${redash.apiKey}`
     const filename = `${query.name}-${visualization?.name}-query-${queryId}-visualization-${visualizationId}.png`
 
-    const file = await capture(embedUrl)
+    const file = await browser.capture(embedUrl)
     client.files.upload({
       channels: message.channel,
       filename,
@@ -35,19 +36,39 @@ export const handleRecordChart: Handler = ({ redash, capture }) => {
   }
 }
 
-export const handleRecordDashboard: Handler = ({ redash, capture }) => {
+export const handleRecordDashboardLegacy: Handler = ({ redash, browser }) => {
   return async ({ client, context, say, message }) => {
-    const [originalUrl, dashboardId]: string[] = context.matches
+    const [originalUrl, dashboardSlug]: string[] = context.matches
     await say(`Taking screenshot of ${originalUrl}`)
 
-    const dashboard = await redash.getDashboard(dashboardId)
-    const filename = `${dashboard.name}-dashboard-${dashboardId}.png`
-    const file = await capture(dashboard.public_url)
+    const dashboard = await redash.getDashboardLegacy(dashboardSlug)
+    const filename = `${dashboard.name}-dashboard-${dashboardSlug}.png`
+    const file = await browser.capture(dashboard.public_url)
     client.files.upload({
       channels: message.channel,
       filename,
       file,
     })
+  }
+}
+
+export const handleRecordDashboard: Handler = ({ redash, browser }) => {
+  return async ({ client, context, say, message }) => {
+    const [originalUrl, dashboardId, dashboardSlug]: string[] = context.matches
+    await say(`Taking screenshot of ${originalUrl}`)
+
+    const dashboard = await redash.getDashboard(dashboardId)
+    const filename = `${dashboard.name}-dashboard-${dashboardId}-${dashboardSlug}.png`
+    if (dashboard.public_url) {
+      const file = await browser.capture(dashboard.public_url)
+      client.files.upload({
+        channels: message.channel,
+        filename,
+        file,
+      })
+    } else {
+      say(`ERROR: ${originalUrl} is not publihed.`)
+    }
   }
 }
 

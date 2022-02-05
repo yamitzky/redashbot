@@ -60,6 +60,15 @@ export class Redash {
     return res.data
   }
 
+  async getDashboardLegacy(idOrSlug: string): Promise<Dashboard> {
+    const res = await axios.get(`${this.alias}/api/dashboards/${idOrSlug}`, {
+      params: {
+        api_key: this.apiKey,
+        legacy: true,
+      },
+    })
+    return res.data
+  }
   async getDashboard(id: string): Promise<Dashboard> {
     const res = await axios.get(`${this.alias}/api/dashboards/${id}`, {
       params: {
