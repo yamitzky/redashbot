@@ -3,10 +3,11 @@ import { Redash } from './redash'
 import Table from 'table-layout'
 import { Browser } from './browser'
 
-type Handler = (ctx: {
-  redash: Redash
-  browser: Browser
-}) => Middleware<SlackEventMiddlewareArgs<'message'>>
+type Args = Pick<SlackEventMiddlewareArgs<'message'>, 'say'> & {
+  message: { channel: string }
+}
+
+type Handler = (ctx: { redash: Redash; browser: Browser }) => Middleware<Args>
 
 export const handleHelp: Middleware<
   SlackEventMiddlewareArgs<'message'>
