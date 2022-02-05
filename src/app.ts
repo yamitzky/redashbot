@@ -1,8 +1,7 @@
-import { App as BoltApp, AppOptions } from '@slack/bolt'
+import { App as BoltApp, AppOptions, LogLevel, WorkflowStep } from '@slack/bolt'
 import { Browser } from './browser'
 import { Config } from './config'
 import {
-  handleHelp,
   Handler,
   handleRecordChart,
   handleRecordDashboard,
@@ -22,8 +21,6 @@ const handlers: [path: string, handler: Handler][] = [
 
 export function createApp(config: Config & AppOptions) {
   const app = new BoltApp(config)
-
-  app.message('help', mention(), handleHelp)
 
   const browser = new Browser()
   for (const [host, { alias, key: apiKey }] of Object.entries(config.hosts)) {
@@ -57,6 +54,110 @@ export function createApp(config: Config & AppOptions) {
       }
     }
   })
+
+  const ws = new WorkflowStep('redash_capture', {
+    edit: async ({ ack, step, configure, ...args }) => {
+      await ack()
+
+      const { inputs } = step
+      const blocks = [
+        {
+          type: 'input',
+          block_id: 'url_input',
+          element: {
+            type: 'plain_text_input',
+            action_id: 'url',
+            initial_value: inputs.url?.value,
+            placeholder: {
+              type: 'plain_text',
+              text: `https://${Object.keys(config.hosts)[0]}/queries/...`,
+            },
+          },
+          label: {
+            type: 'plain_text',
+            text: 'URL to Capture',
+          },
+        },
+        {
+          type: 'input',
+          block_id: 'channel_input',
+          element: {
+            type: 'channels_select',
+            action_id: 'channel',
+            // initial_channel: inputs.channel.value,
+            placeholder: {
+              type: 'plain_text',
+              text: 'general',
+            },
+          },
+          label: {
+            type: 'plain_text',
+            text: 'Channel to Post',
+          },
+        },
+      ]
+
+      await configure({ blocks })
+    },
+    save: async ({ ack, view, update }) => {
+      await ack()
+
+      const { values } = view.state
+      const url = values.url_input.url
+      const channel = values.channel_input.channel
+
+      const inputs = {
+        url: { value: url.value },
+        channel: { value: channel.selected_channel },
+      }
+
+      const outputs = [
+        {
+          type: 'text',
+          name: 'url',
+          label: 'URL to Capture',
+        },
+        {
+          type: 'text',
+          name: 'channel',
+          label: 'Channel to Capture',
+        },
+      ]
+
+      await update({ inputs, outputs })
+    },
+    execute: async (args) => {
+      const { step, complete } = args
+      const { inputs } = step
+
+      const url = inputs.url.value
+      const channel = inputs.channel.value
+
+      for (const [host, { alias, key: apiKey }] of Object.entries(
+        config.hosts
+      )) {
+        const redash = new Redash({ host, apiKey, alias })
+        const ctx = { redash, browser }
+        for (const [path, handler] of handlers) {
+          const matches = new RegExp(`${host}${path}`).exec(url)
+          if (matches) {
+            await handler(ctx)({
+              ...args,
+              context: {
+                ...args.context,
+                matches: matches,
+              },
+              message: { channel },
+            })
+          }
+        }
+      }
+
+      const outputs = { url, channel }
+      await complete({ outputs })
+    },
+  })
+  app.step(ws)
 
   return app
 }

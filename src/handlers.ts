@@ -1,27 +1,24 @@
-import { Middleware, SlackEventMiddlewareArgs } from '@slack/bolt'
+import { Context, Middleware as M, SlackEventMiddlewareArgs } from '@slack/bolt'
 import { Redash } from './redash'
 import Table from 'table-layout'
 import { Browser } from './browser'
+import { WebClient } from '@slack/web-api'
 
-type Args = Pick<SlackEventMiddlewareArgs<'message'>, 'say'> & {
+type Middleware = (args: {
+  context: Context
+  client: WebClient
   message: { channel: string }
-}
+}) => Promise<void>
 
-export type Handler = (ctx: {
-  redash: Redash
-  browser: Browser
-}) => Middleware<Args>
-
-export const handleHelp: Middleware<
-  SlackEventMiddlewareArgs<'message'>
-> = async ({ say }) => {
-  say('Sorry, I cannot help you.')
-}
+export type Handler = (ctx: { redash: Redash; browser: Browser }) => Middleware
 
 export const handleRecordChart: Handler = ({ redash, browser }) => {
-  return async ({ context, say, client, message }) => {
+  return async ({ context, client, message }) => {
     const [originalUrl, queryId, visualizationId]: string[] = context.matches
-    await say(`Taking screenshot of ${originalUrl}`)
+    await client.chat.postMessage({
+      text: `Taking screenshot of ${originalUrl}`,
+      channel: message.channel,
+    })
 
     const query = await redash.getQuery(queryId)
     const visualization = query.visualizations.find(
@@ -41,9 +38,12 @@ export const handleRecordChart: Handler = ({ redash, browser }) => {
 }
 
 export const handleRecordDashboardLegacy: Handler = ({ redash, browser }) => {
-  return async ({ client, context, say, message }) => {
+  return async ({ client, context, message }) => {
     const [originalUrl, dashboardSlug]: string[] = context.matches
-    await say(`Taking screenshot of ${originalUrl}`)
+    await client.chat.postMessage({
+      text: `Taking screenshot of ${originalUrl}`,
+      channel: message.channel,
+    })
 
     const dashboard = await redash.getDashboardLegacy(dashboardSlug)
     const filename = `${dashboard.name}-dashboard-${dashboardSlug}.png`
@@ -57,9 +57,12 @@ export const handleRecordDashboardLegacy: Handler = ({ redash, browser }) => {
 }
 
 export const handleRecordDashboard: Handler = ({ redash, browser }) => {
-  return async ({ client, context, say, message }) => {
+  return async ({ client, context, message }) => {
     const [originalUrl, dashboardId, dashboardSlug]: string[] = context.matches
-    await say(`Taking screenshot of ${originalUrl}`)
+    await client.chat.postMessage({
+      text: `Taking screenshot of ${originalUrl}`,
+      channel: message.channel,
+    })
 
     const dashboard = await redash.getDashboard(dashboardId)
     const filename = `${dashboard.name}-dashboard-${dashboardId}-${dashboardSlug}.png`
@@ -71,13 +74,16 @@ export const handleRecordDashboard: Handler = ({ redash, browser }) => {
         file,
       })
     } else {
-      say(`ERROR: ${originalUrl} is not publihed.`)
+      await client.chat.postMessage({
+        text: `ERROR: ${originalUrl} is not publihed.`,
+        channel: message.channel,
+      })
     }
   }
 }
 
 export const handleRecordTable: Handler = ({ redash }) => {
-  return async ({ context, say }) => {
+  return async ({ context, client, message }) => {
     const [originalUrl, queryId]: string[] = context.matches
     const query = await redash.getQuery(queryId)
     const result = (await redash.getQueryResult(queryId)).query_result.data
@@ -101,6 +107,9 @@ export const handleRecordTable: Handler = ({ redash }) => {
       .split('\n')
       .map((line) => line.trimRight())
       .join('\n')
-    say(`${query.name}\n${tableMessage}`)
+    await client.chat.postMessage({
+      text: `${query.name}\n${tableMessage}`,
+      channel: message.channel,
+    })
   }
 }
