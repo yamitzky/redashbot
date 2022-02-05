@@ -31,7 +31,7 @@ Redashbot V2 is a open-source slack bot for [Redash](https://redash.io).
     
 ## Setup
 
-[Create an Slack app](https://api.slack.com/apps/) and set environment variables `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET`.
+[Create a Slack app](https://api.slack.com/apps/) and set environment variables `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET`.
 
 [The Official Document](https://slack.dev/bolt-js/tutorial/getting-started#create-an-app).
 
