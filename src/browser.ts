@@ -31,7 +31,8 @@ export class Browser {
     page.setViewportSize({ width: 1024, height: 360 })
     await page.goto(url, { timeout: config.browserTimeout })
     try {
-      await page.waitForResponse(/events/, { timeout: config.browserTimeout })
+      const waitFor = url.includes('/query/') ? /results/ : /events/
+      await page.waitForResponse(waitFor, { timeout: config.browserTimeout })
     } catch {
       console.error()
     }
