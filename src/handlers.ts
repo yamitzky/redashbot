@@ -7,7 +7,10 @@ type Args = Pick<SlackEventMiddlewareArgs<'message'>, 'say'> & {
   message: { channel: string }
 }
 
-type Handler = (ctx: { redash: Redash; browser: Browser }) => Middleware<Args>
+export type Handler = (ctx: {
+  redash: Redash
+  browser: Browser
+}) => Middleware<Args>
 
 export const handleHelp: Middleware<
   SlackEventMiddlewareArgs<'message'>

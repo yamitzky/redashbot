@@ -1,40 +1,24 @@
+import { App as BoltApp, AppOptions } from '@slack/bolt'
+import { Browser } from './browser'
+import { Config } from './config'
 import {
-  AllMiddlewareArgs,
-  App as BoltApp,
-  AppOptions,
-  Middleware,
-  SlackCommandMiddlewareArgs,
-} from '@slack/bolt'
-import {
+  handleHelp,
+  Handler,
   handleRecordChart,
   handleRecordDashboard,
   handleRecordDashboardLegacy,
   handleRecordTable,
-  handleHelp,
 } from './handlers'
-import { Redash } from './redash'
-import { Browser } from './browser'
-import { Config } from './config'
 import { mention } from './middleware'
+import { Redash } from './redash'
 
-async function subcommand(
-  cmd: RegExp,
-  args: SlackCommandMiddlewareArgs & AllMiddlewareArgs,
-  middleware: Middleware<any>
-) {
-  const { command } = args
-  const matches = cmd.exec(command.text)
-  if (matches) {
-    await middleware({
-      ...args,
-      context: {
-        ...args.context,
-        matches: matches,
-      },
-      message: { channel: command.channel_id },
-    })
-  }
-}
+const handlers: [path: string, handler: Handler][] = [
+  [`/queries/([0-9]+)#([0-9]+)`, handleRecordChart],
+  [`/dashboard/([^?/|>]+)`, handleRecordDashboardLegacy],
+  [`/dashboards/(\\d+)-([^?/|>]+)`, handleRecordDashboard],
+  [`/queries/([0-9]+)#table`, handleRecordTable],
+  [`/queries/([0-9]+)>?$`, handleRecordTable],
+]
 
 export function createApp(config: Config & AppOptions) {
   const app = new BoltApp(config)
@@ -45,31 +29,9 @@ export function createApp(config: Config & AppOptions) {
   for (const [host, { alias, key: apiKey }] of Object.entries(config.hosts)) {
     const redash = new Redash({ host, apiKey, alias })
     const ctx = { redash, browser }
-    app.message(
-      new RegExp(`${host}/queries/([0-9]+)#([0-9]+)`),
-      mention(),
-      handleRecordChart(ctx)
-    )
-    app.message(
-      new RegExp(`${host}/dashboard/([^?/|>]+)`),
-      mention(),
-      handleRecordDashboardLegacy(ctx)
-    )
-    app.message(
-      new RegExp(`${host}/dashboards/(\\d+)-([^?/|>]+)`),
-      mention(),
-      handleRecordDashboard(ctx)
-    )
-    app.message(
-      new RegExp(`${host}/queries/([0-9]+)#table`),
-      mention(),
-      handleRecordTable(ctx)
-    )
-    app.message(
-      new RegExp(`${host}/queries/([0-9]+)>?$`),
-      mention(),
-      handleRecordTable(ctx)
-    )
+    for (const [path, handler] of handlers) {
+      app.message(new RegExp(`${host}${path}`), mention(), handler(ctx))
+    }
   }
 
   app.command('/redash-capture', async (args) => {
@@ -79,31 +41,20 @@ export function createApp(config: Config & AppOptions) {
     for (const [host, { alias, key: apiKey }] of Object.entries(config.hosts)) {
       const redash = new Redash({ host, apiKey, alias })
       const ctx = { redash, browser }
-      await subcommand(
-        new RegExp(`${host}/queries/([0-9]+)#([0-9]+)`),
-        args,
-        handleRecordChart(ctx)
-      )
-      await subcommand(
-        new RegExp(`${host}/dashboard/([^?/|>]+)`),
-        args,
-        handleRecordDashboardLegacy(ctx)
-      )
-      await subcommand(
-        new RegExp(`${host}/dashboards/(\\d+)-([^?/|>]+)`),
-        args,
-        handleRecordDashboard(ctx)
-      )
-      await subcommand(
-        new RegExp(`${host}/queries/([0-9]+)#table`),
-        args,
-        handleRecordTable(ctx)
-      )
-      await subcommand(
-        new RegExp(`${host}/queries/([0-9]+)>?$`),
-        args,
-        handleRecordTable(ctx)
-      )
+      for (const [path, handler] of handlers) {
+        const { command } = args
+        const matches = new RegExp(`${host}${path}`).exec(command.text)
+        if (matches) {
+          await handler(ctx)({
+            ...args,
+            context: {
+              ...args.context,
+              matches: matches,
+            },
+            message: { channel: command.channel_id },
+          })
+        }
+      }
     }
   })
 
