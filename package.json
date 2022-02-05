@@ -8,11 +8,11 @@
     "build": "tsc"
   },
   "engines": {
-    "node": ">= 10.0"
+    "node": ">= 14.0"
   },
   "license": "MIT",
   "dependencies": {
-    "@slack/bolt": "^2.1.1",
+    "@slack/bolt": "^3.9.0",
     "await-sleep": "0.0.1",
     "aws-serverless-express": "^3.3.8",
     "axios": "^0.19.2",
@@ -21,7 +21,7 @@
     "playwright-core": "^1.18.1",
     "table-layout": "^0.4.3",
     "ts-node": "^9.0.0",
-    "typescript": "^4.0.2"
+    "typescript": "^4.5.5"
   },
   "devDependencies": {
     "@types/express-serve-static-core": "^4.17.9",

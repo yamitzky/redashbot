@@ -16,7 +16,7 @@ export function mention(): Middleware<SlackEventMiddlewareArgs<'message'>> {
       )
     }
 
-    if (!message.text) {
+    if (!('text' in message) || message.text === undefined) {
       return
     }
 

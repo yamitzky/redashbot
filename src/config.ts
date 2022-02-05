@@ -12,6 +12,7 @@ export type Config = {
   hosts: Hosts
   browser: Engine
   sleep: number
+  browserTimeout: number
 }
 
 let hosts: Hosts
@@ -51,5 +52,10 @@ export const config: Config = {
   port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
   browser: (process.env.BROWSER || 'chromium') as Engine,
   sleep: process.env.SLEEP_TIME ? parseFloat(process.env.SLEEP_TIME) : 1000,
+  browserTimeout: process.env.BROWSER_TIMEOUT
+    ? parseFloat(process.env.BROWSER_TIMEOUT)
+    : process.env.SLEEP_TIME
+    ? parseFloat(process.env.SLEEP_TIME)
+    : 10000,
   hosts,
 }
