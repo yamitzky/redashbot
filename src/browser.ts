@@ -39,6 +39,7 @@ export class Browser {
     await sleep(config.sleep)
 
     const buffer = await page.screenshot({ fullPage: true })
+    await page.close()
     return buffer
   }
 }
