@@ -159,5 +159,10 @@ export function createApp(config: Config & AppOptions) {
   })
   app.step(ws)
 
+  // @ts-expect-error
+  app.error((error) => {
+    console.error(error)
+  })
+
   return app
 }
