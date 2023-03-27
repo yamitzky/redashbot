@@ -11,6 +11,7 @@ export type Config = {
   signingSecret: string
   hosts: Hosts
   browser: Engine
+  browserViewportWidth: number
   sleep: number
   browserTimeout: number
 }
@@ -52,6 +53,7 @@ export const config: Config = {
   port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
   browser: (process.env.BROWSER || 'chromium') as Engine,
   sleep: process.env.SLEEP_TIME ? parseFloat(process.env.SLEEP_TIME) : 1000,
+  browserViewportWidth: process.env.BROWSER_VIEWPORT_WIDTH ? parseFloat(process.env.BROWSER_VIEWPORT_WIDTH) : 1024,
   browserTimeout: process.env.BROWSER_TIMEOUT
     ? parseFloat(process.env.BROWSER_TIMEOUT)
     : process.env.SLEEP_TIME
