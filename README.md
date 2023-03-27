@@ -94,6 +94,10 @@ Milliseconds to wait loading finished before capturing.
 
 `chromium`, `firefox` or `webkit`. default is `chromium`
 
+### BROWSER_VIEWPORT_WIDTH (optional and experimental)
+
+Width of browser viewport for screenshot. default is `1024`
+
 ## How to develop
 
 Clone this repository, then

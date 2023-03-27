@@ -28,14 +28,14 @@ export class Browser {
     }
 
     const page = await this.browser.newPage()
-    page.setViewportSize({ width: 1024, height: 360 })
+    page.setViewportSize({ width: config.browserViewportWidth, height: 360 })
     await page.goto(url, { timeout: config.browserTimeout })
     try {
       const waitFor = url.includes('/query/') ? /results/ : /events/
       await page.waitForResponse(waitFor, { timeout: config.browserTimeout })
     } catch {
       console.error()
-    }
+   }
     await sleep(config.sleep)
 
     const buffer = await page.screenshot({ fullPage: true })
