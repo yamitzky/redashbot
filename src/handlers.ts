@@ -29,7 +29,7 @@ export const handleRecordChart: Handler = ({ redash, browser }) => {
     const filename = `${query.name}-${visualization?.name}-query-${queryId}-visualization-${visualizationId}.png`
 
     const file = await browser.capture(embedUrl)
-    client.files.upload({
+    client.files.uploadV2({
       channels: message.channel,
       filename,
       file,
@@ -48,7 +48,7 @@ export const handleRecordDashboardLegacy: Handler = ({ redash, browser }) => {
     const dashboard = await redash.getDashboardLegacy(dashboardSlug)
     const filename = `${dashboard.name}-dashboard-${dashboardSlug}.png`
     const file = await browser.capture(dashboard.public_url)
-    client.files.upload({
+    client.files.uploadV2({
       channels: message.channel,
       filename,
       file,
@@ -68,7 +68,7 @@ export const handleRecordDashboard: Handler = ({ redash, browser }) => {
     const filename = `${dashboard.name}-dashboard-${dashboardId}-${dashboardSlug}.png`
     if (dashboard.public_url) {
       const file = await browser.capture(dashboard.public_url)
-      client.files.upload({
+      client.files.uploadV2({
         channels: message.channel,
         filename,
         file,
