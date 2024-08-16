@@ -16,4 +16,5 @@ services:
       - SLACK_SIGNING_SECRET
       - PORT
       - BROWSER
+      - BROWSER_VIEWPORT_WIDTH
       - SLEEP_TIME

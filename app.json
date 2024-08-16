@@ -27,6 +27,10 @@
     "SLACK_MESSAGE_EVENTS": {
       "description": "Message events this bot reacts. Default is \"direct_message,direct_mention,mention\"Available values are listed in https://github.com/howdyai/botkit/blob/master/readme-slack.md#message-received-events",
       "required": false
+    },
+    "BROWSER_VIEWPORT_WIDTH": {
+      "description": "Viewport size Width of browser. Default is `1024`",
+      "required": false
     }
   },
   "formation": {
