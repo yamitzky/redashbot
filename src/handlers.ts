@@ -47,7 +47,8 @@ export const handleRecordChart: Handler = ({ redash, browser }) => {
     const embedUrl = `${redash.alias}/embed/query/${queryId}/visualization/${visualizationId}?api_key=${redash.apiKey}`
     const filename = `${query.name}-${visualization?.name}-query-${queryId}-visualization-${visualizationId}.png`
 
-    const file = await browser.capture(embedUrl)
+    const options = prepareOptions(context.matches.input)
+    const file = await browser.capture(embedUrl, options.width, options.height)
     client.files.uploadV2({
       channels: message.channel,
       filename,
@@ -66,7 +67,8 @@ export const handleRecordDashboardLegacy: Handler = ({ redash, browser }) => {
 
     const dashboard = await redash.getDashboardLegacy(dashboardSlug)
     const filename = `${dashboard.name}-dashboard-${dashboardSlug}.png`
-    const file = await browser.capture(dashboard.public_url)
+    const options = prepareOptions(context.matches.input)
+    const file = await browser.capture(dashboard.public_url, options.width, options.height)
     client.files.uploadV2({
       channels: message.channel,
       filename,
@@ -86,7 +88,8 @@ export const handleRecordDashboard: Handler = ({ redash, browser }) => {
     const dashboard = await redash.getDashboard(dashboardId)
     const filename = `${dashboard.name}-dashboard-${dashboardId}-${dashboardSlug}.png`
     if (dashboard.public_url) {
-      const file = await browser.capture(dashboard.public_url)
+      const options = prepareOptions(context.matches.input)
+      const file = await browser.capture(dashboard.public_url, options.width, options.height)
       client.files.uploadV2({
         channels: message.channel,
         filename,
