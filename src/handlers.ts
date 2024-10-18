@@ -11,6 +11,25 @@ type Middleware = (args: {
 }) => Promise<void>
 
 export type Handler = (ctx: { redash: Redash; browser: Browser }) => Middleware
+export type CommandOptions = { width: number, height: number}
+
+function prepareOptions(input: string): CommandOptions {
+  const regex = /rb_(\w+)=([\w\d]+)/g;
+
+  const args = {};
+  let match;
+  while ((match = regex.exec(input)) !== null) {
+    const [_, key, value] = match;
+    args[key] = value;
+  }
+
+  const options: CommandOptions = {
+    width: parseInt(args["width"]) || 1024,
+    height: parseInt(args["height"]) || 360,
+  };
+
+  return options;
+}
 
 export const handleRecordChart: Handler = ({ redash, browser }) => {
   return async ({ context, client, message }) => {
