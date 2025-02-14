@@ -28,7 +28,16 @@ Redashbot V2 is a open-source slack bot for [Redash](https://redash.io).
 - Table
   - `@botname <Query URL>#table`
     - e.g. `@redash https://your-redash-server.example.com/queries/1#table`
-    
+
+You can add the following additional arguments to the command.
+
+- e.g. `@botname https://your-redash-server.example.com/queries/1#2 rb_width=1280`
+
+| key | description | default |
+| --- | --- | --- |
+| rb_width | Specify viewport width | 1024 |
+| rb_hight | Specify viewport height | 360 |
+
 ## Setup
 
 [Create a Slack app](https://api.slack.com/apps/) and set environment variables `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET`.

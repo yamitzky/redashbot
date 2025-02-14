@@ -22,13 +22,13 @@ export class Browser {
     }
   }
 
-  async capture(url: string): Promise<Buffer> {
+  async capture(url: string, width: number, height: number): Promise<Buffer> {
     if (!this.browser) {
       this.browser = await launch(config.browser, this.options)
     }
 
     const page = await this.browser.newPage()
-    page.setViewportSize({ width: 1024, height: 360 })
+    page.setViewportSize({ width: width, height: height })
     await page.goto(url, { timeout: config.browserTimeout })
     try {
       const waitFor = url.includes('/query/') ? /results/ : /events/
