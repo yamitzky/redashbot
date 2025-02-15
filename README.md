@@ -103,16 +103,26 @@ Milliseconds to wait loading finished before capturing.
 
 `chromium`, `firefox` or `webkit`. default is `chromium`
 
+### REDASH_CUSTOM_HEADERS (optional)
+
+Add custom HTTP headers to Redash requests. Specify in a semicolon-separated key:value format.
+
+Example:
+```
+REDASH_CUSTOM_HEADERS="CF-Access-Client-Id:your-client-id;CF-Access-Client-Secret:your-client-secret"
+```
+
 ## How to develop
 
 Clone this repository, then
 
 ```bash
 $ npm install
+$ npx playwright install 
 $ export REDASH_HOST=https://your-redash-server.example.com
 $ export REDASH_API_KEY=your-redash-api-key
 $ export SLACK_BOT_TOKEN=your-slack-bot-token
-$ node index.js
+$ npm start
 ```
 
 ## Deploy

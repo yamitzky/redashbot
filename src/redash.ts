@@ -25,56 +25,61 @@ export class Redash {
   host: string
   apiKey: string
   alias: string
+  headers?: Record<string, string>
+
   constructor({
     host,
     apiKey,
     alias,
+    headers,
   }: {
     host: string
     apiKey: string
     alias: string
+    headers?: Record<string, string>
   }) {
     this.alias = alias
     this.host = host
     this.apiKey = apiKey
+    this.headers = headers
+  }
+
+  private getRequestConfig({
+    headers = {},
+    params = {},
+  }: { headers?: Record<string, any>; params?: Record<string, any> } = {}) {
+    return {
+      params: {
+        api_key: this.apiKey,
+        ...params,
+      },
+      headers: {
+        ...this.headers,
+        ...headers,
+      },
+    }
   }
 
   async getQuery(id: string): Promise<Query> {
-    const res = await axios.get(`${this.alias}/api/queries/${id}`, {
-      params: {
-        api_key: this.apiKey,
-      },
-    })
+    const res = await axios.get(`${this.alias}/api/queries/${id}`, this.getRequestConfig())
     return res.data
   }
 
   async getQueryResult(id: string): Promise<QueryResult> {
-    const res = await axios.get(
-      `${this.alias}/api/queries/${id}/results.json`,
-      {
-        params: {
-          api_key: this.apiKey,
-        },
-      }
-    )
+    const res = await axios.get(`${this.alias}/api/queries/${id}/results.json`, this.getRequestConfig())
     return res.data
   }
 
   async getDashboardLegacy(idOrSlug: string): Promise<Dashboard> {
-    const res = await axios.get(`${this.alias}/api/dashboards/${idOrSlug}`, {
-      params: {
-        api_key: this.apiKey,
-        legacy: true,
-      },
-    })
+    const res = await axios.get(
+      `${this.alias}/api/dashboards/${idOrSlug}`,
+      this.getRequestConfig({ params: { legacy: true } }),
+    )
     return res.data
   }
+
   async getDashboard(id: string): Promise<Dashboard> {
-    const res = await axios.get(`${this.alias}/api/dashboards/${id}`, {
-      params: {
-        api_key: this.apiKey,
-      },
-    })
+    const res = await axios.get(`${this.alias}/api/dashboards/${id}`, this.getRequestConfig())
     return res.data
   }
 }
