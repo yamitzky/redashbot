@@ -52,7 +52,7 @@ const headers: Record<string, string> = {}
 try {
   if (process.env.REDASH_CUSTOM_HEADERS) {
     for (const kv of process.env.REDASH_CUSTOM_HEADERS.split(';')) {
-      const [header, value] = kv.split('=', 2)
+      const [header, value] = kv.split(':', 2)
       headers[header] = value
     }
   }
