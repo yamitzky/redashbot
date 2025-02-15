@@ -1,4 +1,3 @@
-version: '2.0'
 services:
   bot:
     build: .
@@ -12,6 +11,7 @@ services:
       - REDASH_HOST_ALIAS
       - REDASH_API_KEY
       - REDASH_HOSTS_AND_API_KEYS
+      - REDASH_CUSTOM_HEADERS
       - SLACK_BOT_TOKEN
       - SLACK_SIGNING_SECRET
       - PORT

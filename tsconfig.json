@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "strict": true,
-    "moduleResolution": "node",
-    "module": "CommonJS",
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "noImplicitAny": false,
@@ -11,7 +11,10 @@
     "allowJs": true,
     "sourceMap": true,
     "rootDir": "./",
-    "lib": ["es2015", "dom"]
+    "lib": ["ES2022", "DOM"],
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
   },
-  "include": ["src/*.ts", "*.ts"]
+  "include": ["src/**/*.ts", "*.ts"],
+  "exclude": ["node_modules"]
 }

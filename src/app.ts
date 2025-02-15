@@ -1,4 +1,4 @@
-import { App as BoltApp, AppOptions, LogLevel, WorkflowStep } from '@slack/bolt'
+import { AppOptions, App as BoltApp, WorkflowStep } from '@slack/bolt'
 import { Browser } from './browser'
 import { Config } from './config'
 import {
@@ -55,6 +55,7 @@ export function createApp(config: Config & AppOptions) {
     }
   })
 
+  // FIXME: deprecated
   const ws = new WorkflowStep('redash_capture', {
     edit: async ({ ack, step, configure, ...args }) => {
       await ack()
@@ -133,9 +134,7 @@ export function createApp(config: Config & AppOptions) {
       const url = inputs.url.value
       const channel = inputs.channel.value
 
-      for (const [host, { alias, key: apiKey }] of Object.entries(
-        config.hosts
-      )) {
+      for (const [host, { alias, key: apiKey }] of Object.entries(config.hosts)) {
         const redash = new Redash({ host, apiKey, alias, headers: config.headers })
         const ctx = { redash, browser }
         for (const [path, handler] of handlers) {
