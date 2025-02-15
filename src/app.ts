@@ -24,7 +24,7 @@ export function createApp(config: Config & AppOptions) {
 
   const browser = new Browser()
   for (const [host, { alias, key: apiKey }] of Object.entries(config.hosts)) {
-    const redash = new Redash({ host, apiKey, alias })
+    const redash = new Redash({ host, apiKey, alias, headers: config.headers })
     const ctx = { redash, browser }
     for (const [path, handler] of handlers) {
       app.message(new RegExp(`${host}${path}`), mention(), handler(ctx))
@@ -36,7 +36,7 @@ export function createApp(config: Config & AppOptions) {
     await ack()
 
     for (const [host, { alias, key: apiKey }] of Object.entries(config.hosts)) {
-      const redash = new Redash({ host, apiKey, alias })
+      const redash = new Redash({ host, apiKey, alias, headers: config.headers })
       const ctx = { redash, browser }
       for (const [path, handler] of handlers) {
         const { command } = args
@@ -136,7 +136,7 @@ export function createApp(config: Config & AppOptions) {
       for (const [host, { alias, key: apiKey }] of Object.entries(
         config.hosts
       )) {
-        const redash = new Redash({ host, apiKey, alias })
+        const redash = new Redash({ host, apiKey, alias, headers: config.headers })
         const ctx = { redash, browser }
         for (const [path, handler] of handlers) {
           const matches = new RegExp(`${host}${path}`).exec(url)
