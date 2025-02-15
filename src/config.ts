@@ -50,14 +50,14 @@ if (process.env.REDASH_HOST) {
 
 const headers: Record<string, string> = {}
 try {
-  if (process.env.CUSTOM_HEADERS) {
-    for (const kv of process.env.CUSTOM_HEADERS.split(';')) {
+  if (process.env.REDASH_CUSTOM_HEADERS) {
+    for (const kv of process.env.REDASH_CUSTOM_HEADERS.split(';')) {
       const [header, value] = kv.split('=', 2)
       headers[header] = value
     }
   }
 } catch (error) {
-  console.warn('Failed to parse CUSTOM_HEADERS:', error)
+  console.warn('Failed to parse REDASH_CUSTOM_HEADERS:', error)
 }
 
 export const config: Config = {
