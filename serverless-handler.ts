@@ -1,7 +1,7 @@
+import serverlessExpress from '@codegenie/serverless-express'
+import { ExpressReceiver } from '@slack/bolt'
 import { createApp } from './src/app'
 import { config } from './src/config'
-import { ExpressReceiver } from '@slack/bolt'
-import awsServerlessExpress from 'aws-serverless-express'
 
 const expressReceiver = new ExpressReceiver({
   signingSecret: config.signingSecret,
@@ -9,7 +9,17 @@ const expressReceiver = new ExpressReceiver({
 })
 createApp({ ...config, processBeforeResponse: true })
 
-const server = awsServerlessExpress.createServer(expressReceiver.app)
-export const app = (event, context) => {
-  awsServerlessExpress.proxy(server, event, context)
+let serverlessExpressInstance
+
+async function setup(event, context) {
+  serverlessExpressInstance = serverlessExpress({ app: expressReceiver.app })
+  return serverlessExpressInstance(event, context)
+}
+
+export function app(event, context) {
+  if (serverlessExpressInstance) {
+    return serverlessExpressInstance(event, context)
+  }
+
+  return setup(event, context)
 }
