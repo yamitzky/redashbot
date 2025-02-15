@@ -1,5 +1,7 @@
 # Redash用Slack Bot V2
 
+[English README](https://github.com/yamitzky/redashbot/blob/main/README.md)
+
 Redashbot V2は、[Redash](https://redash.io)のためのオープンソースSlack botです。
 
 (hakobera/redashbotからフォークされましたが、ほぼすべてのコードを書き直し、V2として公開しています。)
