@@ -105,7 +105,7 @@ Milliseconds to wait loading finished before capturing.
 
 ### REDASH_CUSTOM_HEADERS (optional)
 
-Add custom HTTP headers to Redash requests. Specify in a semicolon-separated key=value format.
+Add custom HTTP headers to Redash requests. Specify in a semicolon-separated key:value format.
 
 Example:
 ```

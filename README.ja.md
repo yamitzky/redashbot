@@ -95,7 +95,7 @@ REDASH_HOSTS_AND_API_KEYS="http://redash1.example.com;http://redash1-alias.examp
 
 ### REDASH_CUSTOM_HEADERS（オプション）
 
-RedashリクエストにカスタムHTTPヘッダーを追加します。セミコロン区切りのkey=value形式で指定します。
+RedashリクエストにカスタムHTTPヘッダーを追加します。セミコロン区切りのkey:value形式で指定します。
 
 例：
 ```
