@@ -83,6 +83,10 @@ Set to `true` to enable Socket Mode. When enabled, the bot will use WebSocket co
 
 App-level token for Socket Mode. Required when `SLACK_SOCKET_MODE=true`. The token should start with `xapp-`.
 
+### PORT (optional)
+
+Port number for the HTTP server. Default is 3000.
+
 ### REDASH_HOST and REDASH_API_KEY (optional)
 
 Redash's URL and its API Key.
@@ -112,6 +116,10 @@ Milliseconds to wait loading finished before capturing.
 ### BROWSER (optional and experimental)
 
 `chromium`, `firefox` or `webkit`. default is `chromium`
+
+### BROWSER_TIMEOUT (optional)
+
+Browser timeout in milliseconds. Default is the value of `SLEEP_TIME` or 10000 if `SLEEP_TIME` is not set.
 
 ### REDASH_CUSTOM_HEADERS (optional)
 

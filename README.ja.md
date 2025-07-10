@@ -73,6 +73,10 @@ Socket Modeを有効にするには`true`に設定します。有効にすると
 
 Socket Mode用のアプリレベルトークン。`SLACK_SOCKET_MODE=true`の場合に必要です。トークンは`xapp-`で始まる必要があります。
 
+### PORT（オプション）
+
+HTTPサーバーのポート番号。デフォルトは3000です。
+
 ### REDASH_HOSTとREDASH_API_KEY（オプション）
 
 RedashのURLとそのAPIキー。
@@ -102,6 +106,10 @@ REDASH_HOSTS_AND_API_KEYS="http://redash1.example.com;http://redash1-alias.examp
 ### BROWSER（オプションかつ実験的）
 
 `chromium`、`firefox`、または`webkit`。デフォルトは`chromium`です。
+
+### BROWSER_TIMEOUT（オプション）
+
+ブラウザのタイムアウト時間（ミリ秒）。デフォルトは`SLEEP_TIME`の値、または`SLEEP_TIME`が設定されていない場合は10000です。
 
 ### REDASH_CUSTOM_HEADERS（オプション）
 
