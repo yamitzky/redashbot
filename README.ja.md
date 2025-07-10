@@ -65,6 +65,18 @@ SlackのBotトークン。
 
 Slackの署名シークレット。
 
+### SLACK_SOCKET_MODE（オプション）
+
+Socket Modeを有効にするには`true`に設定します。有効にすると、BotはHTTPエンドポイントの代わりにWebSocket接続を使用します。
+
+### SLACK_APP_TOKEN（Socket Modeで必須）
+
+Socket Mode用のアプリレベルトークン。`SLACK_SOCKET_MODE=true`の場合に必要です。トークンは`xapp-`で始まる必要があります。
+
+### PORT（オプション）
+
+HTTPサーバーのポート番号。デフォルトは3000です。
+
 ### REDASH_HOSTとREDASH_API_KEY（オプション）
 
 RedashのURLとそのAPIキー。
@@ -95,6 +107,10 @@ REDASH_HOSTS_AND_API_KEYS="http://redash1.example.com;http://redash1-alias.examp
 
 `chromium`、`firefox`、または`webkit`。デフォルトは`chromium`です。
 
+### BROWSER_TIMEOUT（オプション）
+
+ブラウザのタイムアウト時間（ミリ秒）。デフォルトは`SLEEP_TIME`の値、または`SLEEP_TIME`が設定されていない場合は10000です。
+
 ### REDASH_CUSTOM_HEADERS（オプション）
 
 RedashリクエストにカスタムHTTPヘッダーを追加します。セミコロン区切りのkey:value形式で指定します。
@@ -114,6 +130,10 @@ $ npx playwright install
 $ export REDASH_HOST=https://your-redash-server.example.com
 $ export REDASH_API_KEY=your-redash-api-key
 $ export SLACK_BOT_TOKEN=your-slack-bot-token
+$ export SLACK_SIGNING_SECRET=your-slack-signing-secret
+$ # Socket Mode（オプション）
+$ export SLACK_SOCKET_MODE=true
+$ export SLACK_APP_TOKEN=xapp-your-app-token
 $ npm start
 ```
 

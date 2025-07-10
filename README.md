@@ -75,6 +75,18 @@ Slack's bot token.
 
 Slack's sigining secret.
 
+### SLACK_SOCKET_MODE (optional)
+
+Set to `true` to enable Socket Mode. When enabled, the bot will use WebSocket connections instead of HTTP endpoints.
+
+### SLACK_APP_TOKEN (required for Socket Mode)
+
+App-level token for Socket Mode. Required when `SLACK_SOCKET_MODE=true`. The token should start with `xapp-`.
+
+### PORT (optional)
+
+Port number for the HTTP server. Default is 3000.
+
 ### REDASH_HOST and REDASH_API_KEY (optional)
 
 Redash's URL and its API Key.
@@ -105,6 +117,10 @@ Milliseconds to wait loading finished before capturing.
 
 `chromium`, `firefox` or `webkit`. default is `chromium`
 
+### BROWSER_TIMEOUT (optional)
+
+Browser timeout in milliseconds. Default is the value of `SLEEP_TIME` or 10000 if `SLEEP_TIME` is not set.
+
 ### REDASH_CUSTOM_HEADERS (optional)
 
 Add custom HTTP headers to Redash requests. Specify in a semicolon-separated key:value format.
@@ -124,6 +140,10 @@ $ npx playwright install
 $ export REDASH_HOST=https://your-redash-server.example.com
 $ export REDASH_API_KEY=your-redash-api-key
 $ export SLACK_BOT_TOKEN=your-slack-bot-token
+$ export SLACK_SIGNING_SECRET=your-slack-signing-secret
+$ # For Socket Mode (optional)
+$ export SLACK_SOCKET_MODE=true
+$ export SLACK_APP_TOKEN=xapp-your-app-token
 $ npm start
 ```
 
