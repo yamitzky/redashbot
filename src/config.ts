@@ -9,6 +9,8 @@ export type Config = {
   port: number
   token: string
   signingSecret: string
+  appToken?: string
+  socketMode?: boolean
   hosts: Hosts
   browser: Engine
   sleep: number
@@ -63,6 +65,8 @@ try {
 export const config: Config = {
   token: process.env.SLACK_BOT_TOKEN!,
   signingSecret: process.env.SLACK_SIGNING_SECRET!,
+  appToken: process.env.SLACK_APP_TOKEN,
+  socketMode: process.env.SLACK_SOCKET_MODE === 'true',
   port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
   browser: (process.env.BROWSER || 'chromium') as Engine,
   sleep: process.env.SLEEP_TIME ? parseFloat(process.env.SLEEP_TIME) : 1000,
