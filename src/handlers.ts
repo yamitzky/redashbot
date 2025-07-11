@@ -120,7 +120,7 @@ export const handleRecordTable: Handler = ({ redash }) => {
       const dashes = '-'.repeat(friendly_name.length)
       cols[friendly_name] = `${friendly_name}\n${dashes}`
     }
-    const table = new Table([cols].concat(rows))
+    const table = new Table([cols].concat(rows), {break: true})
     let tableMessage = '```' + table.toString() + '```'
     tableMessage = tableMessage
       .split('\n')
